@@ -96,6 +96,7 @@ body:before{content:"";position:fixed;inset:0 0 auto;height:3px;z-index:1000;bac
 .video-gallery{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:22px}.video-card{background:#fff;border:1px solid var(--line);border-radius:18px;overflow:hidden;box-shadow:0 10px 30px rgba(8,45,67,.07);transition:transform .35s,box-shadow .35s}.video-card:hover{transform:translateY(-6px);box-shadow:var(--shadow)}.video-card .video-frame{border-radius:0;aspect-ratio:16/9}.video-card h4{margin:14px 16px 5px;color:var(--navy);font-size:16px}.video-card p{margin:0 16px 14px;color:var(--muted);font-size:12px;line-height:1.55}.video-card>a{display:inline-block;margin:0 16px 16px;color:var(--teal);font-size:12px;font-weight:800}@media(max-width:850px){.video-gallery{grid-template-columns:1fr 1fr}}@media(max-width:560px){.video-gallery{grid-template-columns:1fr}}</style>
 </head>
 <body>
+<div class="scroll-progress" aria-hidden="true"></div>
 <div class="topbar"><div class="container topbar-inner"><div>Move Better. Live Brighter.</div><div class="top-links"><a href="tel:+917660032158">☎ +91 76600 32158</a><a href="tel:+917729006303">☎ +91 77290 06303</a><a href="mailto:rehabilitationclinicvld@gmail.com">✉ rehabilitationclinicvld@gmail.com</a></div></div></div>
 <header><div class="container nav"><a class="brand" href="#home"><div class="brand-mark"><img src="logo.png" alt="Clinic logo"></div><div><strong>Physiotherapy Homecare &amp; Rehabilitation Clinic</strong><small>Vayalpad · Your Health. Our Priority.</small></div></a><nav class="links"><a class="active" href="#home">Home</a><a href="#about">About</a><a href="#services">Services</a><a href="#physiotherapy">Physiotherapy</a><a href="#exercises">Exercises</a><a href="#social">Social</a><a href="#contact">Contact</a></nav><div class="nav-actions"><a class="social" href="https://www.instagram.com/physio.vayalpad/" target="_blank" rel="noopener" aria-label="Instagram">◎</a><a class="social" href="https://www.facebook.com/vayalpadphysiohomecare" target="_blank" rel="noopener" aria-label="Facebook">f</a><a class="btn small" href="https://wa.me/917660032158?text=Hello%2C%20I%20would%20like%20to%20book%20a%20physiotherapy%20appointment." target="_blank" rel="noopener">Book Appointment</a><button class="menu" aria-label="Open menu" onclick="document.body.classList.toggle('menu-open')">☰</button></div></div><div class="mobile-nav"><a href="#home">Home</a><a href="#about">About</a><a href="#services">Services</a><a href="#physiotherapy">Physiotherapy</a><a href="#exercises">Exercises</a><a href="#social">Social</a><a href="#contact">Contact</a></div></header>
 <main id="home">
@@ -197,6 +198,34 @@ if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches && window.matc
   card.addEventListener('pointerleave',()=>{card.style.transform=''});
  });
 }
+
+/* Premium motion controls: lightweight scroll state + accessible pointer depth */
+const motionReduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+let scrollTick=false;
+window.addEventListener('scroll',()=>{
+ if(scrollTick)return;scrollTick=true;
+ requestAnimationFrame(()=>{
+  document.body.classList.toggle('scrolled',window.scrollY>18);
+  scrollTick=false;
+ });
+},{passive:true});
+document.body.classList.toggle('scrolled',window.scrollY>18);
+if(!motionReduced && window.matchMedia('(pointer:fine)').matches){
+ const visual=document.querySelector('.hero-visual');
+ const frame=document.querySelector('.photo-frame');
+ visual?.addEventListener('pointermove',e=>{
+  const r=visual.getBoundingClientRect();
+  const px=(e.clientX-r.left)/r.width-.5;
+  const py=(e.clientY-r.top)/r.height-.5;
+  frame?.style.setProperty('--tilt-x',(py*-2).toFixed(2)+'deg');
+  frame?.style.setProperty('--tilt-y',(px*2).toFixed(2)+'deg');
+ });
+ visual?.addEventListener('pointerleave',()=>{
+  frame?.style.setProperty('--tilt-x','0deg');
+  frame?.style.setProperty('--tilt-y','0deg');
+ });
+}
+
 </script>
 </body>
 </html>
